@@ -38,6 +38,50 @@ def preprocess(text):
 #Apply the preprocessing function to the abstract column
 papers_df['processed_abstract'] = papers_df['abstract'].apply(preprocess)
 
+# Function to add a tooltip with information
+def add_tooltip(slider_label):
+    return f"""
+    <style>
+    .tooltip {{
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+    }}
+
+    .tooltip .tooltiptext {{
+        visibility: hidden;
+        width: 220px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 100%; /* Position the tooltip above the text */
+        left: 50%;
+        margin-left: -110px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }}
+
+    .tooltip:hover .tooltiptext {{
+        visibility: visible;
+        opacity: 1;
+    }}
+    </style>
+
+    <div class="tooltip">{slider_label}
+      <span class="tooltiptext">
+        Adjusting the similarity threshold changes the criteria for connecting papers. 
+        - Lower thresholds (e.g., 0.2) connect papers that are highly similar (cosine similarity > 0.8).
+        - Higher thresholds (e.g., 0.7) connect papers that are less similar (cosine similarity > 0.3).
+      </span>
+    </div>
+    """
+
+
+
 # Available models for selection
 model_options = [
     'all-MiniLM-L6-v2',
@@ -51,7 +95,6 @@ st.sidebar.title("Model Options")
 selected_model = st.sidebar.selectbox("Select Embedding Model", model_options)
 
 # Function to load the selected SentenceTransformer model
-@st.cache_resource
 def load_model(model_name):
     return SentenceTransformer(model_name)
 
@@ -59,7 +102,7 @@ def load_model(model_name):
 model = load_model(selected_model)
 
 # Function to compute embeddings for a list of texts
-@st.cache_data
+@st.cache_data #used to cach data computations
 def compute_embeddings(texts, model):
     return model.encode(texts)
 
@@ -203,7 +246,9 @@ def create_graph(papers_df, distance_metric, question_embedding, threshold):
         
     # Add edges between papers based on threshold
     for i in range(num_papers):
+        # Calculate pairwise distances between papers
         for j in range(i + 1, num_papers):
+            # Calculate distance based on selected metric
             distance = calculate_distances(np.array([abstract_embeddings[i]]), np.array([abstract_embeddings[j]]), distance_metric)[0]
             if distance < threshold:
                 G.add_edge(papers_df.iloc[i]['title'], papers_df.iloc[j]['title'], weight=distance)
@@ -351,7 +396,9 @@ else:
     st.write("Please enter a research question to start reviewing papers.")
 
 # Plot the network graph
-threshold = st.slider('Similarity Threshold', min_value=0.0, max_value=1.0, value=0.68, step=0.01)
+# Display tooltip with slider
+st.markdown(add_tooltip("Similarity Threshold"), unsafe_allow_html=True)
+threshold = st.slider('', min_value=0.0, max_value=1.0, value=0.30, step=0.01)
 G = create_graph(papers_df, distance_metric, question_embedding, threshold)
 fig = plot_network_graph(G)
 st.plotly_chart(fig)
