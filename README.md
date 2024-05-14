@@ -8,10 +8,10 @@ This project aims to provide an interactive tool for analyzing and visualizing r
 
 ## Folder Structure
 
-- `preprocessing/`: Contains preprocessing scripts and modules.
+
 - `data/`: Directory for storing dataset files (not included in the repository).
-- `scripts/`: Contains the main application script and other relevant scripts.
-- `output/`: Directory for storing output files.
+- `app.py`: The script
+
 
 ## Setup and Installation
 
