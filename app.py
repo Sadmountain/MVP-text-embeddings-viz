@@ -15,7 +15,7 @@ papers_df = pd.read_csv(data_path)
 
 # Sample with at least all the relevant datapoints
 relevant_papers = papers_df[papers_df['label_included'] == 1]
-num_additional_papers = 500 - len(relevant_papers)
+num_additional_papers = 100 - len(relevant_papers)
 if num_additional_papers > 0:
     non_relevant_papers = papers_df[papers_df['label_included'] != 1]
     additional_papers = non_relevant_papers.sample(min(len(non_relevant_papers), num_additional_papers), random_state=42)
@@ -27,7 +27,7 @@ papers_df = subset_df.reset_index(drop=True)
 # Drop rows with NaN values in the abstract column
 papers_df = papers_df.dropna(subset=['abstract'])
 
-# Text preprocessing
+# Function to preprocess the text (lowercasing, removing punctuation, and tokenizing)
 def preprocess(text):
     if text is not None:
         text = text.lower().replace('.', '').replace(',', '').replace(':', '')
@@ -35,6 +35,7 @@ def preprocess(text):
         return ' '.join(tokens)
     return ""
 
+#Apply the preprocessing function to the abstract column
 papers_df['processed_abstract'] = papers_df['abstract'].apply(preprocess)
 
 # Available models for selection
@@ -49,16 +50,20 @@ model_options = [
 st.sidebar.title("Model Options")
 selected_model = st.sidebar.selectbox("Select Embedding Model", model_options)
 
+# Function to load the selected SentenceTransformer model
 @st.cache_resource
 def load_model(model_name):
     return SentenceTransformer(model_name)
 
+# Load the selected model
 model = load_model(selected_model)
 
+# Function to compute embeddings for a list of texts
 @st.cache_data
 def compute_embeddings(texts, model):
     return model.encode(texts)
 
+# Compute embeddings for the processed abstracts
 abstract_embeddings = model.encode(papers_df['processed_abstract'].tolist())
 
 # Initialize session state for storing ratings and reviewed indices
@@ -88,6 +93,7 @@ research_question = st.text_input("Enter your research question", "")
 processed_question = preprocess(research_question)
 question_embedding = model.encode([processed_question])
 
+# Function to calculate distances between embeddings and the research question embedding (+ other already screened relevant papers)
 @st.cache_data
 def calculate_distances(embeddings, question_embedding, metric):
     if metric == "Euclidean":
@@ -304,12 +310,16 @@ def plot_network_graph(G):
 
 # Determine the next most relevant paper to scan
 def get_next_paper(question_embedding, abstract_embeddings, distance_metric):
+    #Check if there are already reviewed papers
     if st.session_state['index_reviewed']:
         rated_indices = [idx for idx, rated in st.session_state['ratings'].items() if rated]
         if rated_indices:
+            # Calculate the average embedding of the research question and relevant papers
             relevant_embeddings = np.array(abstract_embeddings)[rated_indices]
             avg_embedding = np.mean(np.vstack([question_embedding, relevant_embeddings]), axis=0).reshape(1, -1)  # Reshape here
+            # Calculate distances between the average embedding and all papers
             distances = calculate_distances(abstract_embeddings, avg_embedding, distance_metric)
+            # Find the closest Unreviewed paper
             best_next = sorted([(idx, dist) for idx, dist in enumerate(distances) if idx not in st.session_state['index_reviewed']], key=lambda x: x[1])
             return best_next[0][0] if best_next else None
         else:

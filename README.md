@@ -34,6 +34,11 @@ This project aims to provide an interactive tool for analyzing and visualizing r
 
 4. Place your dataset in the `data/` directory. For example this dataset:https://github.com/asreview/synergy-dataset/tree/master/datasets/van_de_Schoot_2018
 
+The review question for this dataset is: 
+The course, i.e., trajectory, of post-traumatic stress symptoms (PTSS) differs widely, with most trauma-exposed individuals being either resilient or quickly recovering from initial symptoms, while for a subgroup of individuals PTSS are severe and may persist for years.
+
+
+
 5. Run the Streamlit app:
     ```sh
     streamlit run main_app.py
