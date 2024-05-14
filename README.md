@@ -36,7 +36,7 @@ This project aims to provide an interactive tool for analyzing and visualizing r
 
 5. Run the Streamlit app:
     ```sh
-    streamlit run scripts/main_app.py
+    streamlit run main_app.py
     ```
 
 ## Contact Information
