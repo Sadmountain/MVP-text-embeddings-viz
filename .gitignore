@@ -1,0 +1,10 @@
+# Ignore all files in the data directory except .gitkeep
+data/*
+!data/.gitkeep
+
+# Ignore virtual environment directories
+venv/
+env_thesis_mvp/
+
+# Ignore large files
+env_thesis_mvp/lib/python3.11/site-packages/torch/lib/libtorch_cpu.dylib
