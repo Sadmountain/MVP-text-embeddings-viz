@@ -210,8 +210,9 @@ if research_question:
                      symbol_map={'Paper': 'circle', 'Research Question': 'diamond'},
                      color_discrete_sequence=px.colors.qualitative.Set1)
 
-    fig.update_traces(marker=dict(line=dict(width=[2 if x == 1 else 1 for x in pca_df['label_included']],
-                                            color=['red' if x == 1 else '#FFFFFF' for x in pca_df['label_included']])),
+   # Update traces to only add red borders to papers marked as relevant by the user
+    fig.update_traces(marker=dict(line=dict(width=[2 if st.session_state['ratings'].get(i, False) else 1 for i in range(len(pca_df))],
+                                            color=['red' if st.session_state['ratings'].get(i, False) else '#FFFFFF' for i in range(len(pca_df))])),
                       selector=dict(mode='markers'))
 
     fig.update_layout(
