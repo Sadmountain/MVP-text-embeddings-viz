@@ -41,7 +41,7 @@ The course, i.e., trajectory, of post-traumatic stress symptoms (PTSS) differs w
 
 6. Run the Streamlit app:
     ```sh
-    streamlit run main_app.py
+    streamlit run app.py
     ```
 
 ## Contact Information
