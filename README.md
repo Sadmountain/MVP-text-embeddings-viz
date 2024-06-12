@@ -37,9 +37,9 @@ This project aims to provide an interactive tool for analyzing and visualizing r
 The review question for this dataset is: 
 The course, i.e., trajectory, of post-traumatic stress symptoms (PTSS) differs widely, with most trauma-exposed individuals being either resilient or quickly recovering from initial symptoms, while for a subgroup of individuals PTSS are severe and may persist for years.
 
+5. Run the data_preparation.py file for adding the authors column
 
-
-5. Run the Streamlit app:
+6. Run the Streamlit app:
     ```sh
     streamlit run main_app.py
     ```
