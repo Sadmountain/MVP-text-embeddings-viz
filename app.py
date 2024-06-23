@@ -266,6 +266,10 @@ if research_question:
     else:
         next_paper_title = None
         
+    
+    #show dataframe
+    st.dataframe(pca_df, width=700, height=300)
+        
     st.markdown("""
 **Legend:**
 - **Red Border:** Papers marked as relevant by the user.
