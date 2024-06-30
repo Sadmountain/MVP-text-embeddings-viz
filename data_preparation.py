@@ -41,6 +41,9 @@ print(f"Number of papers with no authors found: {num_no_authors}")
 # Drop rows with NaN values in the abstract column
 papers_df = papers_df.dropna(subset=['abstract'])
 
+# Drop rows with abstracts shorter than 20 words
+papers_df = papers_df[papers_df['abstract'].apply(lambda x: len(x.split()) >= 20)]
+
 # Function to preprocess the text (lowercasing, removing punctuation, and tokenizing)
 def preprocess(text):
     if text is not None:

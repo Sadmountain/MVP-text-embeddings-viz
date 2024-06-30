@@ -281,7 +281,7 @@ if research_question:
     fig = px.scatter(pca_df, x='PCA1', y='PCA2',
                      color='Cluster',
                      hover_name='Title',
-                     title='2D PCA of research paper abstracts and review question',
+                     title='2D PCA of research paper abstracts and review question embeddings',
                      template="simple_white",
                      symbol='Type',
                      hover_data={'label_included': True},
